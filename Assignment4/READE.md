@@ -48,16 +48,14 @@ resulting in a more uniform spread of hash indices and reduced clustering compar
         hash = (hash << 5) + hash + static_cast<unsigned char>(tolower(c));  
     }
     return static_cast<int>(hash % m);
-}
-
+  }
 
   ```
-- Rationale
-Although the strings may have the same length, this hashing method still produces different indices.  
+- Rationale: Although the strings may have the same length, this hashing method still produces different indices.  
 This shows that the hash function accounts for the actual characters and their order, not just the length, resulting in more varied and reliable hash values.
 
 
-## Experimental Setup
+### Experimental Setup
 - Table sizes tested (m): 10, 11, 37
 - Test dataset:
   - Integers: 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60
