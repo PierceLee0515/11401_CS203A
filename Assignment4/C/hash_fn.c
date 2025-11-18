@@ -17,7 +17,7 @@
 #include <math.h>
 
 int myHashInt(int key, int m) {
-    const double A = 0.6180339;   // slightly more precise constant
+    const double A = 0.6180339;  
     double value = key * A;
     double frac  = value - floor(value);
     return (int)(frac * m);
@@ -29,8 +29,8 @@ int myHashString(const char* str, int m) {
 
     while ((c = (unsigned char)*str++) != '\0')
     {
-        hash = (hash << 5) + hash;  // hash * 32 + hash
-        hash += c;                  // += character
+        hash = (hash << 5) + hash;  
+        hash += c;                  
     }
 
     return (int)(hash % m);
