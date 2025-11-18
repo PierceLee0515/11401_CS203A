@@ -1,6 +1,6 @@
 /*
    ========================================
-   hash_fn.h ??? declare your hash functions
+   hash_fn.h --- declare your hash functions
    ========================================
 
    Description:
