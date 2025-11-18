@@ -12,28 +12,17 @@ Email: piercelee0515@gmail.com
 - Formula / pseudocode:
 ```cpp
 int myHashInt(int key, int m) {
-    // FNV-1a parameters
-    const unsigned long FNV_OFFSET = 146527;
-    const unsigned long FNV_PRIME  = 16777619ul;
+    unsigned int x = static_cast<unsigned int>(key);
 
-    unsigned long hash = FNV_OFFSET;
-    unsigned long x = (unsigned long)key;
+    // Knuth multiplicative hashing (uses golden ratio constant in integer form)
+    x *= 2654435761u;
 
-    // scramble the integer using XOR + multiplication
-    hash ^= (x & 0xFF);
-    hash *= FNV_PRIME;
+    // Shift to extract high bits (which contain good entropy)
+    unsigned int hash = x >> 16;
 
-    hash ^= ((x >> 8) & 0xFF);
-    hash *= FNV_PRIME;
-
-    hash ^= ((x >> 16) & 0xFF);
-    hash *= FNV_PRIME;
-
-    hash ^= ((x >> 24) & 0xFF);
-    hash *= FNV_PRIME;
-
-    return (int)(hash % m);
+    return static_cast<int>(hash % m);
 }
+
 
   ```
 - Rationale
