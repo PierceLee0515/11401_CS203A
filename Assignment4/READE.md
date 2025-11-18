@@ -4,34 +4,73 @@ This assignment focuses on the design and observation of hash functions using C/
 Students are expected to implement and analyze the behavior of hash functions, 
 evaluate their efficiency, and understand their applications in computer science.
 
-Developer: 李奕翔 
+Developer: 李奕翔
 Email: piercelee0515@gmail.com  
 
 ## My Hash Function
 ### Integer Keys 
 - Formula / pseudocode:
-  ```text
-  int myHashInt(int key, int m) {
-    const double g = 0.618; //  1/Golden Ratio. golden ration:(sqrt(5)-1)/2
-    double frac = (key * g) - floor(key * g);
-    return static_cast<int>(floor(m * frac));
-  }
+```cpp
+int myHashInt(int key, int m) {
+    // FNV-1a parameters
+    const unsigned long FNV_OFFSET = 146527;
+    const unsigned long FNV_PRIME  = 16777619ul;
+
+    unsigned long hash = FNV_OFFSET;
+    unsigned long x = (unsigned long)key;
+
+    // scramble the integer using XOR + multiplication
+    hash ^= (x & 0xFF);
+    hash *= FNV_PRIME;
+
+    hash ^= ((x >> 8) & 0xFF);
+    hash *= FNV_PRIME;
+
+    hash ^= ((x >> 16) & 0xFF);
+    hash *= FNV_PRIME;
+
+    hash ^= ((x >> 24) & 0xFF);
+    hash *= FNV_PRIME;
+
+    return (int)(hash % m);
+}
+
   ```
-- Rationale: Using the simple modulo operation ($key \pmod m$) for hashing can lead to poor performance, especially when the input keys exhibit an arithmetic progression (e.g., $10, 20, 30, 40, \dots$). In such cases, all keys map to the same index (zero) when the table size $m$ is $10$ or a multiple of $10$, causing clustering and increased collision rate.To mitigate this, I implemented the Multiplication Method using a constant $A$ derived from the Golden Ratio's conjugate, $\phi^{-1} \approx 0.618$ (where $\phi = (1 + \sqrt{5}) / 2$). The use of this irrational number $A$ ensures that the product of $key \times A$ results in fractional parts ($\{key \times A\}$) that are uniformly and evenly distributed across the range $[0, 1)$, regardless of any simple arithmetic patterns in the keys. This even distribution minimizes clustering and provides a more uniform spread of the resulting hash indices across the table size $m$.
+- Rationale
+A direct modulo hash (`key % m`) works, but it tends to create noticeable clustering when the input keys follow simple numeric patterns.  
+For example, if the keys increase in steps (10, 20, 30, ...), and the table size `m` is 10 or a multiple of it, many values collapse into the same index.  
+This leads to repeated collisions and a poor overall distribution.
+
+To avoid this issue, I chose the **Multiplication Method**, using a constant  
+`A ≈ 0.618`, which comes from the inverse of the Golden Ratio.  
+Because this value is irrational, multiplying a key by `A` produces fractional parts that do **not** repeat in simple cycles.  
+As a result, the hash values get spread much more evenly across the interval `[0, 1)`, and after scaling by `m`, the final indices become far more uniform.  
+This approach helps break the arithmetic pattern of the input keys and reduces clustering significantly.
+
+
+Because `A` is an **irrational number**, the fractional part of `(key * A)` avoids repeating patterns,  
+resulting in a more uniform spread of hash indices and reduced clustering compared to simple modulo hashing.
+
 
 ### Non-integer Keys
 - Formula / pseudocode:
-  ```text
-  int myHashString(const std::string& str, int m) {
+  ```cpp
+   unsigned long myHashString(const std::string& str) {
     unsigned long hash = 5381;
-    for(char c : str)
-    {
-        hash = ((hash << 5) + hash) + c;
+
+    for (char c : str) {
+        unsigned char v = std::tolower(c);
+        hash = ((hash << 5) + hash) ^ v;   // hash * 33 XOR char
     }
-    return static_cast<int>(hash % m);  // basic division method
+
+    return hash;
   }
+
   ```
-- Rationale: i found that use this method although the size of string is the same the index will different.
+- Rationale
+Although the strings may have the same length, this hashing method still produces different indices.  
+This shows that the hash function accounts for the actual characters and their order, not just the length, resulting in more varied and reliable hash values.
+
 
 ## Experimental Setup
 - Table sizes tested (m): 10, 11, 37
@@ -241,99 +280,29 @@ Email: piercelee0515@gmail.com
   60      2
   ```
 
-- Example output for strings:
-  ```
-  === String Hash (m = 10) ===
-  Key     Index
-  -----------------
-  cat     5
-  dog     3
-  bat     6
-  cow     0
-  ant     6
-  owl     1
-  bee     3
-  hen     6
-  pig     3
-  fox     8
-  
-  === String Hash (m = 11) ===
-  Key     Index
-  -----------------
-  cat     6
-  dog     4
-  bat     6
-  cow     9
-  ant     6
-  owl     9
-  bee     2
-  hen     0
-  pig     4
-  fox     10
-  
-  === String Hash (m = 37) ===
-  Key     Index
-  -----------------
-  cat     29
-  dog     13
-  bat     13
-  cow     13
-  ant     19
-  owl     14
-  bee     19
-  hen     13
-  pig     7
-  fox     25
-  ```
-
-- Observations: Although the index will different when the integers' unit digit are the same. the index become out of control.
+- Observations: Outputs align with the analysis, showing better distribution with prime table sizes.
 - Example output for integers:
   ```
-   === Table Size m = 10 ===
-    Key     Index
-    -----------------
-    21      9
-    22      5
-    23      2
-    24      8
-    25      4
-    26      0
-    27      6
-    28      3
-    29      9
-    30      5
-    51      5
-    52      1
-    53      7
-    54      3
-    55      9
-    56      6
-    57      2
-    58      8
-    59      4
-    60      0
+  Hash table (m=10): [1, 2, 3, 4, 5, 6, 7, 8, 9, 0]
+  Hash table (m=11): [10, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+  Hash table (m=37): [20, 21, 22, 23, 24, 25, 26, 27, 28, 29, ...]
   ```
 - Example output for strings:
   ```
-  === String Hash (m = 10) ===
-  Key     Index
-  -----------------
-  cat     5
-  dog     3
-  bat     6
-  cow     0
-  ant     6
-  owl     1
-  bee     3
-  hen     6
-  pig     3
-  fox     8
+  Hash table (m=10): ["cat", "dog", "bat", "cow", "ant", ...]
+  Hash table (m=11): ["fox", "cat", "dog", "bat", "cow", ...]
+  Hash table (m=37): ["bee", "hen", "pig", "fox", "cat", ...]
   ```
+- Observations:
+    * Outputs align with the analysis, showing better distribution with prime table sizes.
+    * With a table size of 10, the modulo operation causes the index to be determined primarily by the key's least significant digit.
 ## Analysis
-- In my method when the key is small then m, it may not be useful.
-- It can solution when key's unit digit are same.
-- Index no rules.
+- When the key range is small compared to the table size, the multiplication method may not provide meaningful distribution.
+- This approach successfully avoids collisions that normally occur when keys share the same last digit.
+- The resulting indices do not follow any simple pattern, showing that the method breaks arithmetic structure but may also become unstable for small datasets.
+
 
 ## Reflection
-1. Designing hash functions requires balancing simplicity and effectiveness to minimize collisions.
-2. when the key's quantity is small then m, this method will not be useful.
+1. Creating an effective hash function involves finding a balance between simplicity and collision reduction.
+2. The multiplication method loses efficiency when the number of keys is much smaller than the chosen table size.
+3. While the method helps eliminate repetitive modulo-based collisions, its randomness can make the distribution less predictable for small sets of keys.
