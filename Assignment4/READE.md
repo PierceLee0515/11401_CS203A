@@ -14,10 +14,8 @@ Email: piercelee0515@gmail.com
 int myHashInt(int key, int m) {
     unsigned int x = static_cast<unsigned int>(key);
 
-    // Knuth multiplicative hashing (uses golden ratio constant in integer form)
     x *= 2654435761u;
 
-    // Shift to extract high bits (which contain good entropy)
     unsigned int hash = x >> 16;
 
     return static_cast<int>(hash % m);
@@ -44,16 +42,14 @@ resulting in a more uniform spread of hash indices and reduced clustering compar
 ### Non-integer Keys
 - Formula / pseudocode:
   ```cpp
-   unsigned long myHashString(const std::string& str) {
+   int myHashString(const std::string& str, int m) {
     unsigned long hash = 5381;
-
     for (char c : str) {
-        unsigned char v = std::tolower(c);
-        hash = ((hash << 5) + hash) ^ v;   // hash * 33 XOR char
+        hash = (hash << 5) + hash + static_cast<unsigned char>(tolower(c));  
     }
+    return static_cast<int>(hash % m);
+}
 
-    return hash;
-  }
 
   ```
 - Rationale
