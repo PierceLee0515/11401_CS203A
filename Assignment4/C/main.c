@@ -9,25 +9,22 @@
    defined in "hash_fn.c".
 
    Development History:
-    - 2025/11/11: Initial implementation
-    - 2025/11/18: download from AssignmentIV (hash_fn.cpp/hash_fn.hpp/main.cpp)
-    - 2025/11/18: 23:51 Finished Development(revised developer info)
+    - 2025/11/18: Initial implementation
+    - 2025/11/19: Finished Development
 
-   Developer: Yu-Cheng Wei <iixun01200.tw@gmail.com> 
+   Developer: YI-HSIANG LEE <piercelee0515@gmail.com> 
  */
 
 #include <stdio.h>
 #include <string.h>
 #include "hash_fn.c"
 
-// Caution: Do not change the content of this file.
+
 
 int main(void) {
-    // Integer keys
     int int_keys[] = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60};
     int num_keys = sizeof(int_keys) / sizeof(int_keys[0]);
 
-    // Table sizes to test
     int table_sizes[] = {10, 11, 37};
     int num_sizes = sizeof(table_sizes) / sizeof(table_sizes[0]);
 
@@ -45,7 +42,7 @@ int main(void) {
         printf("\n");
     }
 
-    // String keys (Non-integer keys)
+
     const char* str_keys[] = {"cat", "dog", "bat", "cow", "ant", "owl", "bee", "hen", "pig", "fox"};
     num_keys = sizeof(str_keys) / sizeof(str_keys[0]);
 
