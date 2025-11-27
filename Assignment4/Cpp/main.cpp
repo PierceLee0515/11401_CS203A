@@ -22,7 +22,6 @@ using namespace std;
 
 
 int main() {
-    // Integer keys
     vector<int> intKeys = {21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60};
     
     vector<int> sizes = {10, 11, 37};
