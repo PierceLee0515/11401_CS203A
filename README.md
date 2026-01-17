@@ -18,4 +18,11 @@ This course introduces fundamental data structures and algorithms for undergradu
 **ID:** 1101527  
 
 # Repository Description 
-This repository is where I record what I learned in the Data Structure course.
+- ## 第一部分：Assignment（作業）
+本部分包含五次作業，重點在實作與應用資料結構解決問題。
+
+- **Assignment 1**
+- **Assignment 2**
+- **Assignment 3** 
+- **Assignment 4**
+- **Assignment 5**
