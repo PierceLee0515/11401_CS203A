@@ -1,0 +1,28 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+using namespace std;
+
+int main(){
+    int t;
+    cin >> t;
+    while (t--) {
+        int n;
+        cin >> n;
+        vector<int>a(n);
+        int cnt = 0;
+        for (int i = 0; i < n; i++) {
+            cin >> a[i];
+        }
+        for (int x = 0; x < n - 1; x++) {
+            for (int y = 0; y < n - 1 - x; y++) {
+                if (a[y] > a[y + 1]) {
+                    swap(a[y], a[y + 1]);
+                    cnt++;
+                }
+            }
+        }
+        cout << "Optimal train swapping takes " << cnt << " swaps." << endl;
+    }
+    return 0;
+}
