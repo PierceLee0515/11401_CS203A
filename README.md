@@ -26,7 +26,7 @@ This course introduces fundamental data structures and algorithms for undergradu
 - **Assignment 3** 
 - **Assignment 4**
 - **Assignment 5**
-- 
+
 ## 第二部分：Quiz
 本部分總共五次小測驗，涵蓋資料結構核心概念與操作。
 
